@@ -1,0 +1,8 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Inspicure/frontend.git",
+  "author": "<6peterlu@gmail.com>",
+  "license": "MIT"
+}
