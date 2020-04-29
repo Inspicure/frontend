@@ -1,14 +1,22 @@
 import React from 'react';
 import { Button, Title, TextInput } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
-import { signIn } from '../api';
+import { STORAGE_KEYS } from 'app/constants';
+import { signin } from 'app/api';
 import { useHistory } from 'react-router-dom';
+import useAsyncStorage from 'app/hooks/storage';
 
 const Signin = () => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const history = useHistory();
+  // TODO: this syntax looks gross
+  const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
+  const [, , updateAuthToken] = useAsyncStorage(
+    STORAGE_KEYS.AUTH_TOKEN,
+  );
+
   return (
     <View
       style={{
@@ -39,7 +47,13 @@ const Signin = () => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            await signIn(email, pass);
+            const response = await signin(email, pass);
+            if (response.token && response.id) {
+              console.log('fields populated');
+              await updateUserId(response.id.toString());
+              await updateAuthToken(response.token);
+              history.push('/');
+            }
             setButtonLoading(false);
           }}
           disabled={!(email && pass)}

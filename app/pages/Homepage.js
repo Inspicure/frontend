@@ -1,41 +1,63 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  ActivityIndicator,
   Appbar,
   Button,
   Subheading,
   Title,
   TextInput,
+  Text,
 } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import { Redirect } from 'react-router-native';
-import * as Keychain from 'react-native-keychain';
+import useAsyncStorage from 'app/hooks/storage';
+import { STORAGE_KEYS } from 'app/constants';
 
 const Homepage = () => {
-  const [loading, setLoading] = React.useState(true);
-  const [credentials, setCredentials] = React.useState(null);
-  React.useEffect(() => {
-    const loadCredentialsFromKeychain = async () => {
-      const savedCredentials = await Keychain.getGenericPassword();
-      setCredentials(savedCredentials);
-      setLoading(false);
-    };
-    loadCredentialsFromKeychain();
-  }, [setCredentials]);
+  console.log('hello 1');
+  const [
+    storedAuthToken,
+    authTokenDataReady,
+    ,
+    clearAuthToken,
+  ] = useAsyncStorage(STORAGE_KEYS.AUTH_TOKEN);
+
+  const [
+    storedUserId,
+    userIdDataReady,
+    ,
+    clearUserId,
+  ] = useAsyncStorage(STORAGE_KEYS.USER_ID);
+
+  console.log('hello');
+
+  console.log('render');
+  console.log(storedAuthToken);
+  console.log(authTokenDataReady);
+  console.log(storedUserId);
+  console.log(userIdDataReady);
 
   // redirect to signup if no credentials in keychain
-  return !loading && !credentials ? (
-    <Redirect to={{ pathname: '/signup' }} />
+  return !(authTokenDataReady && userIdDataReady) ? (
+    <ActivityIndicator animating={true} />
+  ) : !(storedAuthToken && storedUserId) ? (
+    <Redirect to={{ pathname: '/signin' }} />
   ) : (
-    <Appbar.Header>
-      <Appbar.Content title="Home" />
-    </Appbar.Header>
+    <>
+      <Appbar.Header>
+        <Appbar.Content title="Home" />
+      </Appbar.Header>
+      <Button
+        onPress={() => {
+          clearAuthToken();
+          clearUserId();
+        }}
+      >
+        Logout
+      </Button>
+    </>
   );
-};
-
-Homepage.propTypes = {
-  userId: PropTypes.string.isRequired,
-  accessToken: PropTypes.string, // TODO: make this required once we can auth
 };
 
 export default Homepage;

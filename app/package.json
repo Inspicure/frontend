@@ -11,9 +11,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.9.0",
+    "query-string": "^6.12.1",
     "react": "16.11.0",
     "react-native": "0.62.2",
-    "react-native-keychain": "^6.0.0",
     "react-native-paper": "^3.8.0",
     "react-native-vector-icons": "^6.6.0",
     "react-router-dom": "^5.1.2",
