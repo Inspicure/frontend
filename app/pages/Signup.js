@@ -6,8 +6,8 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
-import { signupNewUser } from '../api';
 import { useHistory } from 'react-router-dom';
+import { signupNewUser } from '../api';
 
 const Signup = () => {
   const [email, setEmail] = React.useState('');
@@ -40,7 +40,7 @@ const Signup = () => {
             label="Password"
             onChangeText={setPass}
             style={{ width: 300 }}
-            secureTextEntry={true}
+            secureTextEntry
           />
           <TextInput
             label="First name"

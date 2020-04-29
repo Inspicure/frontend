@@ -1,7 +1,7 @@
 // source: https://github.com/react-native-hooks/async-storage/blob/master/src/index.js
 import React, { useEffect, useState } from 'react';
 import { AsyncStorage } from 'react-native';
-// TODO: usecallback some stuff in here
+
 export default (key) => {
   const [storageItem, setStorageItem] = useState(null);
   const [dataReady, setDataReady] = useState(false);
@@ -21,7 +21,7 @@ export default (key) => {
       setDataReady(true);
       return data;
     },
-    [setStorageItem, setDataReady, key],
+    [key],
   );
 
   const clearStorageItem = React.useCallback(async () => {
@@ -29,7 +29,7 @@ export default (key) => {
     await AsyncStorage.removeItem(key);
     setStorageItem(null);
     setDataReady(true);
-  }, [setDataReady, key, setStorageItem]);
+  }, [key]);
 
   useEffect(() => {
     const populateStorageItem = async () => {
@@ -37,7 +37,7 @@ export default (key) => {
       setDataReady(true);
     };
     populateStorageItem();
-  }, [getStorageItem, setDataReady, key]);
+  }, [getStorageItem, key]);
 
   return [
     storageItem,

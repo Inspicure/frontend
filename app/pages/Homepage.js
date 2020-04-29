@@ -1,15 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   ActivityIndicator,
   Appbar,
   Button,
-  Subheading,
-  Title,
-  TextInput,
-  Text,
 } from 'react-native-paper';
-import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import { Redirect } from 'react-router-native';
 import useAsyncStorage from 'app/hooks/storage';
 import { STORAGE_KEYS } from 'app/constants';
