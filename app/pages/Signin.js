@@ -1,21 +1,22 @@
 import React from 'react';
-import {
-  Button,
-  Subheading,
-  Title,
-  TextInput,
-} from 'react-native-paper';
+import { Button, Title, TextInput } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
+import { STORAGE_KEYS } from 'app/constants';
+import { signin } from 'app/api';
 import { useHistory } from 'react-router-dom';
-import { signupNewUser } from '../api';
+import useAsyncStorage from 'app/hooks/storage';
 
-const Signup = () => {
+const Signin = () => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
-  const [firstName, setFirstName] = React.useState('');
-  const [lastName, setLastName] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const history = useHistory();
+  // TODO: this syntax looks gross
+  const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
+  const [, , updateAuthToken] = useAsyncStorage(
+    STORAGE_KEYS.AUTH_TOKEN,
+  );
+
   return (
     <View
       style={{
@@ -24,8 +25,7 @@ const Signup = () => {
         flex: 1,
       }}
     >
-      <Title>Murmo</Title>
-      <Subheading>where physicians collaborate</Subheading>
+      <Title>Login to Murmo</Title>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -40,41 +40,36 @@ const Signup = () => {
             label="Password"
             onChangeText={setPass}
             style={{ width: 300 }}
-            secureTextEntry
-          />
-          <TextInput
-            label="First name"
-            onChangeText={setFirstName}
-            style={{ width: 300 }}
-          />
-          <TextInput
-            label="Last name"
-            onChangeText={setLastName}
-            style={{ width: 300 }}
+            secureTextEntry={true}
           />
         </View>
         <Button
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            await signupNewUser(email, pass, firstName, lastName);
+            const response = await signin(email, pass);
+            if (response.token && response.id) {
+              await updateUserId(response.id.toString());
+              await updateAuthToken(response.token);
+              history.push('/');
+            }
             setButtonLoading(false);
           }}
-          disabled={!(email && pass && firstName && lastName)}
+          disabled={!(email && pass)}
           loading={buttonLoading}
         >
-          Sign up
+          Sign in
         </Button>
         <Button
           onPress={() => {
-            history.push('/signin');
+            history.push('/signup');
           }}
         >
-          Sign in
+          Sign up
         </Button>
       </KeyboardAvoidingView>
     </View>
   );
 };
 
-export default Signup;
+export default Signin;
