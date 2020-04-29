@@ -49,7 +49,6 @@ const Signin = () => {
             setButtonLoading(true);
             const response = await signin(email, pass);
             if (response.token && response.id) {
-              console.log('fields populated');
               await updateUserId(response.id.toString());
               await updateAuthToken(response.token);
               history.push('/');

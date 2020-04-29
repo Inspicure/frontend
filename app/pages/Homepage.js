@@ -15,7 +15,6 @@ import useAsyncStorage from 'app/hooks/storage';
 import { STORAGE_KEYS } from 'app/constants';
 
 const Homepage = () => {
-  console.log('hello 1');
   const [
     storedAuthToken,
     authTokenDataReady,
@@ -29,14 +28,6 @@ const Homepage = () => {
     ,
     clearUserId,
   ] = useAsyncStorage(STORAGE_KEYS.USER_ID);
-
-  console.log('hello');
-
-  console.log('render');
-  console.log(storedAuthToken);
-  console.log(authTokenDataReady);
-  console.log(storedUserId);
-  console.log(userIdDataReady);
 
   // redirect to signup if no credentials in keychain
   return !(authTokenDataReady && userIdDataReady) ? (
