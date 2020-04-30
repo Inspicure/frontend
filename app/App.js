@@ -8,19 +8,21 @@
 
 import React from 'react';
 
-import { NativeRouter, Route } from 'react-router-native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import Homepage from './pages/Homepage';
+import Router from './pages/Router';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 
+const Stack = createStackNavigator();
+
 const App = () => {
   return (
-    <NativeRouter>
-      <Route exact path="/" component={Homepage} />
-      <Route path="/signin" component={Signin} />
-      <Route path="/signup" component={Signup} />
-    </NativeRouter>
+    <Stack.Navigator initialRouteName="Sign Up">
+      <Stack.Screen name="Home" component={Router} />
+      <Stack.Screen name="Sign In" component={Signin} />
+      <Stack.Screen name="Sign Up" component={Signup} />
+    </Stack.Navigator>
   );
 };
 

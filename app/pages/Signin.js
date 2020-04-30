@@ -1,16 +1,15 @@
 import React from 'react';
 import { Button, Title, TextInput } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
+import {PropTypes} from "prop-types"
 import { STORAGE_KEYS } from 'app/constants';
 import { signin } from 'app/api';
-import { useHistory } from 'react-router-dom';
 import useAsyncStorage from 'app/hooks/storage';
 
-const Signin = () => {
+const Signin = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
-  const history = useHistory();
   // TODO: this syntax looks gross
   const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
   const [, , updateAuthToken] = useAsyncStorage(
@@ -40,7 +39,7 @@ const Signin = () => {
             label="Password"
             onChangeText={setPass}
             style={{ width: 300 }}
-            secureTextEntry={true}
+            secureTextEntry
           />
         </View>
         <Button
@@ -51,7 +50,7 @@ const Signin = () => {
             if (response.token && response.id) {
               await updateUserId(response.id.toString());
               await updateAuthToken(response.token);
-              history.push('/');
+              navigation.navigate("Home");
             }
             setButtonLoading(false);
           }}
@@ -62,7 +61,7 @@ const Signin = () => {
         </Button>
         <Button
           onPress={() => {
-            history.push('/signup');
+            navigation.navigate("Sign Up")
           }}
         >
           Sign up
@@ -70,6 +69,11 @@ const Signin = () => {
       </KeyboardAvoidingView>
     </View>
   );
+};
+
+Signin.propTypes = {
+  navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired })
+    .isRequired, // eslint killin me
 };
 
 export default Signin;

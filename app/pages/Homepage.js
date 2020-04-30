@@ -3,12 +3,14 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
+  IconButton,
+  Menu,
 } from 'react-native-paper';
-import { Redirect } from 'react-router-native';
+import PropTypes from 'prop-types';
 import useAsyncStorage from 'app/hooks/storage';
 import { STORAGE_KEYS } from 'app/constants';
 
-const Homepage = () => {
+const Homepage = ({ navigation }) => {
   const [
     storedAuthToken,
     authTokenDataReady,
@@ -23,16 +25,55 @@ const Homepage = () => {
     clearUserId,
   ] = useAsyncStorage(STORAGE_KEYS.USER_ID);
 
-  // redirect to signup if no credentials in keychain
-  return !(authTokenDataReady && userIdDataReady) ? (
-    <ActivityIndicator animating={true} />
-  ) : !(storedAuthToken && storedUserId) ? (
-    <Redirect to={{ pathname: '/signin' }} />
-  ) : (
+  const [menuVisible, setMenuVisible] = React.useState(false);
+
+  const dataReady = authTokenDataReady && userIdDataReady;
+
+  React.useEffect(() => {
+    if (dataReady && !(storedAuthToken && storedUserId)) {
+      navigation.navigate('Sign In');
+    }
+  });
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="menu"
+          onPress={() => navigation.navigate('DrawerToggle')}
+        />
+      ),
+      headerTitle: 'hellooooo',
+    });
+  }, [navigation]);
+
+  return dataReady ? (
     <>
       <Appbar.Header>
+        <Menu
+          onDismiss={() => {
+            setMenuVisible(false);
+          }}
+          visible={menuVisible}
+          anchor={
+            // eslint-disable-next-line react/jsx-wrap-multilines
+            <Appbar.Action
+              color="white"
+              icon="airplane-takeoff"
+              onPress={() => {
+                setMenuVisible(true);
+              }}
+            />
+          }
+        >
+          <Menu.Item onPress={() => {}} title="Item 1" />
+        </Menu>
         <Appbar.Content title="Home" />
       </Appbar.Header>
+      <IconButton
+        icon="menu"
+        onPress={() => navigation.toggleDrawer()}
+      />
       <Button
         onPress={() => {
           clearAuthToken();
@@ -42,7 +83,17 @@ const Homepage = () => {
         Logout
       </Button>
     </>
+  ) : (
+    <ActivityIndicator animating />
   );
+};
+
+Homepage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    setOptions: PropTypes.func.isRequired,
+    toggleDrawer: PropTypes.func.isRequired,
+  }).isRequired, // eslint killin me
 };
 
 export default Homepage;
