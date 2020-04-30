@@ -27,27 +27,37 @@ const Homepage = ({ navigation }) => {
 
   const [menuVisible, setMenuVisible] = React.useState(false);
 
-  const dataReady = authTokenDataReady && userIdDataReady;
-
   React.useEffect(() => {
-    if (dataReady && !(storedAuthToken && storedUserId)) {
+    if (
+      authTokenDataReady &&
+      userIdDataReady &&
+      !(storedAuthToken && storedUserId)
+    ) {
       navigation.navigate('Sign In');
     }
-  });
+  }, [
+    authTokenDataReady,
+    navigation,
+    storedAuthToken,
+    storedUserId,
+    userIdDataReady,
+  ]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
+      headerLeft: () => (
         <IconButton
           icon="menu"
-          onPress={() => navigation.navigate('DrawerToggle')}
+          onPress={() => navigation.toggleDrawer()}
         />
       ),
-      headerTitle: 'hellooooo',
+      headerTitle: 'hi',
     });
   }, [navigation]);
 
-  return dataReady ? (
+  console.log(authTokenDataReady && userIdDataReady);
+
+  return (
     <>
       <Appbar.Header>
         <Menu
@@ -70,23 +80,78 @@ const Homepage = ({ navigation }) => {
         </Menu>
         <Appbar.Content title="Home" />
       </Appbar.Header>
-      <IconButton
-        icon="menu"
-        onPress={() => navigation.toggleDrawer()}
-      />
-      <Button
-        onPress={() => {
-          clearAuthToken();
-          clearUserId();
-        }}
-      >
-        Logout
-      </Button>
+      {authTokenDataReady && userIdDataReady ? (
+        <>
+          <Button
+            onPress={() => {
+              clearAuthToken();
+              clearUserId();
+            }}
+          >
+            Logout
+          </Button>
+          <Button
+            onPress={() => {
+              navigation.navigate('Chat');
+            }}
+          >
+            Go to chat
+          </Button>
+        </>
+      ) : (
+        <ActivityIndicator animating />
+      )}
     </>
-  ) : (
-    <ActivityIndicator animating />
   );
 };
+
+//   authTokenDataReady && userIdDataReady ? (
+//     <>
+//       <Appbar.Header>
+//         <Menu
+//           onDismiss={() => {
+//             setMenuVisible(false);
+//           }}
+//           visible={menuVisible}
+//           anchor={
+//             // eslint-disable-next-line react/jsx-wrap-multilines
+//             <Appbar.Action
+//               color="white"
+//               icon="airplane-takeoff"
+//               onPress={() => {
+//                 setMenuVisible(true);
+//               }}
+//             />
+//           }
+//         >
+//           <Menu.Item onPress={() => {}} title="Item 1" />
+//         </Menu>
+//         <Appbar.Content title="Home" />
+//       </Appbar.Header>
+//       <IconButton
+//         icon="menu"
+//         onPress={() => navigation.toggleDrawer()}
+//       />
+//       <Button
+//         onPress={() => {
+//           clearAuthToken();
+//           clearUserId();
+//         }}
+//       >
+//         Logout
+//       </Button>
+//       <Button
+//         onPress={() => {
+//           navigation.navigate('Chat');
+//         }}
+//       >
+//         Go to chat
+//       </Button>
+//     </>
+//   ) : (
+//     <ActivityIndicator animating />
+//   );
+// };
 
 Homepage.propTypes = {
   navigation: PropTypes.shape({
