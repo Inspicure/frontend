@@ -11,37 +11,21 @@ import useAsyncStorage from 'app/hooks/storage';
 import { STORAGE_KEYS } from 'app/constants';
 
 const Homepage = ({ navigation }) => {
-  const [
-    storedAuthToken,
-    authTokenDataReady,
-    ,
-    clearAuthToken,
-  ] = useAsyncStorage(STORAGE_KEYS.AUTH_TOKEN);
-
-  const [
-    storedUserId,
-    userIdDataReady,
-    ,
-    clearUserId,
-  ] = useAsyncStorage(STORAGE_KEYS.USER_ID);
+  const memoizedStartValue = React.useMemo(() => {return {ready: false}},[])
+  const [userData, setUserData] = useAsyncStorage(STORAGE_KEYS.USER_DATA, memoizedStartValue)
 
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   React.useEffect(() => {
+    console.log(`effect triggered with ${JSON.stringify(userData)}`);
     if (
-      authTokenDataReady &&
-      userIdDataReady &&
-      !(storedAuthToken && storedUserId)
+      userData.ready &&
+      !(userData.id && userData.token)
     ) {
+      console.log("navigating back")
       navigation.navigate('Sign In');
     }
-  }, [
-    authTokenDataReady,
-    navigation,
-    storedAuthToken,
-    storedUserId,
-    userIdDataReady,
-  ]);
+  }, [navigation, userData]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -54,8 +38,6 @@ const Homepage = ({ navigation }) => {
       headerTitle: 'hi',
     });
   }, [navigation]);
-
-  console.log(authTokenDataReady && userIdDataReady);
 
   return (
     <>
@@ -80,12 +62,11 @@ const Homepage = ({ navigation }) => {
         </Menu>
         <Appbar.Content title="Home" />
       </Appbar.Header>
-      {authTokenDataReady && userIdDataReady ? (
+      {userData.ready ? (
         <>
           <Button
             onPress={() => {
-              clearAuthToken();
-              clearUserId();
+              setUserData({ready: true})
             }}
           >
             Logout

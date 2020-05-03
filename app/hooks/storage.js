@@ -1,48 +1,77 @@
 // source: https://github.com/react-native-hooks/async-storage/blob/master/src/index.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default (key) => {
-  const [storageItem, setStorageItem] = useState(null);
-  const [dataReady, setDataReady] = useState(false);
+// export default (key) => {
+//   const [storageItem, setStorageItem] = useState(null);
+//   const [dataReady, setDataReady] = useState(false);
 
-  const getStorageItem = React.useCallback(async () => {
-    const data = await AsyncStorage.getItem(key);
-    setStorageItem(data);
-  }, [key, setStorageItem]);
+//   const getStorageItem = React.useCallback(async () => {
+//     const data = await AsyncStorage.getItem(key);
+//     setStorageItem(data);
+//     setDataReady(true);
+//   }, [key]);
 
-  const updateStorageItem = React.useCallback(
-    async (data) => {
-      setDataReady(false);
-      if (typeof data === 'string') {
-        await AsyncStorage.setItem(key, data);
-        setStorageItem(data);
+//   const updateStorageItem = React.useCallback(
+//     async (data) => {
+//       setDataReady(false);
+//       if (typeof data === 'string') {
+//         await AsyncStorage.setItem(key, data);
+//         setStorageItem(data);
+//       }
+//       setDataReady(true);
+//       return data;
+//     },
+//     [key],
+//   );
+
+//   const clearStorageItem = React.useCallback(async () => {
+//     setDataReady(false);
+//     await AsyncStorage.removeItem(key);
+//     setStorageItem(null);
+//     setDataReady(true);
+//   }, [key]);
+
+//   useEffect(() => {
+//     if (!dataReady) {
+//       getStorageItem();
+//     }
+//   }, [dataReady, getStorageItem, key]);
+
+//   return [
+//     storageItem,
+//     dataReady,
+//     updateStorageItem,
+//     clearStorageItem,
+//   ];
+// };
+
+// modified from source: https://gist.github.com/msukmanowsky/08a3650223dda8b102d2c9fe94ad5c12
+export default (key, initialValue) => {
+  const [storedValue, setStoredValue] = React.useState(initialValue);
+
+  React.useEffect(() => {
+    console.log("effect triggered")
+    const populateStoredValue = async () => {
+      const storedData = await AsyncStorage.getItem(key);
+      if (storedData === null) {
+        setStoredValue(initialValue)
+      } else {
+        setStoredValue(JSON.parse(storedData))
       }
-      setDataReady(true);
-      return data;
-    },
-    [key],
-  );
+    }
+    populateStoredValue()
+  }, [initialValue, key]);
 
-  const clearStorageItem = React.useCallback(async () => {
-    setDataReady(false);
-    await AsyncStorage.removeItem(key);
-    setStorageItem(null);
-    setDataReady(true);
-  }, [key]);
+  const setValue = async (value) => {
+    console.log("raw value")
+    console.log(value)
+    const valueToStore = value instanceof Function ? value(storedValue) : value;
+    console.log("value stored")
+    console.log(JSON.stringify(valueToStore))
+    await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
+    setStoredValue(valueToStore);
+  }
 
-  useEffect(() => {
-    const populateStorageItem = async () => {
-      await getStorageItem();
-      setDataReady(true);
-    };
-    populateStorageItem();
-  }, [getStorageItem, key]);
-
-  return [
-    storageItem,
-    dataReady,
-    updateStorageItem,
-    clearStorageItem,
-  ];
-};
+  return [storedValue, setValue];
+}

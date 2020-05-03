@@ -10,11 +10,12 @@ const Signin = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
-  // TODO: this syntax looks gross
-  const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
-  const [, , updateAuthToken] = useAsyncStorage(
-    STORAGE_KEYS.AUTH_TOKEN,
-  );
+  const memoizedStartValue = React.useMemo(() => {return {ready: true}},[])
+  const [, setUserData] = useAsyncStorage(STORAGE_KEYS.USER_DATA, memoizedStartValue)
+  // const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
+  // const [, , updateAuthToken] = useAsyncStorage(
+  //   STORAGE_KEYS.AUTH_TOKEN,
+  // );
 
   return (
     <View
@@ -46,11 +47,13 @@ const Signin = ({navigation}) => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
+            setUserData({ready: false})
             const response = await signin(email, pass);
             if (response.token && response.id) {
-              await updateUserId(response.id.toString());
-              await updateAuthToken(response.token);
+              await setUserData({id: response.id.toString(), token: response.token, ready: true})
               navigation.navigate("Home");
+            } else {
+              setUserData({ready: true})
             }
             setButtonLoading(false);
           }}

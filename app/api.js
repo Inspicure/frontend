@@ -1,4 +1,5 @@
 import * as qs from 'query-string';
+
 const apiServer = 'http://localhost:5000';
 
 const post = async (route, payload) => {
@@ -6,7 +7,7 @@ const post = async (route, payload) => {
     method: 'post',
     headers: {
       Accept: 'application/json',
-      ['Content-Type']: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
   });
@@ -18,7 +19,9 @@ const post = async (route, payload) => {
   console.log(
     `POST call to /${route} errored with status ${fetchResult.status}`,
   );
-  return;
+  return null;
+
+
 };
 
 const get = async (route, params) => {
@@ -28,7 +31,6 @@ const get = async (route, params) => {
     method: 'get',
     headers: {
       Accept: 'application/json',
-      ['Content-Type']: 'application/json',
     },
   });
   if (fetchResult.ok) {
@@ -38,7 +40,8 @@ const get = async (route, params) => {
   console.log(
     `GET call to /${route} errored with status ${fetchResult.status}`,
   );
-  return;
+  return null;
+
 };
 
 export const signupNewUser = (
