@@ -47,30 +47,25 @@ import AsyncStorage from '@react-native-community/async-storage';
 // };
 
 // modified from source: https://gist.github.com/msukmanowsky/08a3650223dda8b102d2c9fe94ad5c12
-export default (key, initialValue) => {
-  const [storedValue, setStoredValue] = React.useState(initialValue);
+export default (key) => {
+  // default to not being ready to allow load
+  const [storedValue, setStoredValue] = React.useState({ready: false});
 
   React.useEffect(() => {
-    console.log("effect triggered")
+    console.log("triggering effect")
     const populateStoredValue = async () => {
       const storedData = await AsyncStorage.getItem(key);
-      if (storedData === null) {
-        setStoredValue(initialValue)
-      } else {
+      if (storedData !== null) {
         setStoredValue(JSON.parse(storedData))
       }
     }
     populateStoredValue()
-  }, [initialValue, key]);
+  }, [key]);
 
   const setValue = async (value) => {
-    console.log("raw value")
-    console.log(value)
-    const valueToStore = value instanceof Function ? value(storedValue) : value;
-    console.log("value stored")
-    console.log(JSON.stringify(valueToStore))
-    await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
-    setStoredValue(valueToStore);
+    // const valueToStore = value instanceof Function ? value(storedValue) : value;
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+    setStoredValue(value);
   }
 
   return [storedValue, setValue];

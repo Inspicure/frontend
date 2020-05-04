@@ -1,21 +1,14 @@
 import React from 'react';
 import { Button, Title, TextInput } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
-import {PropTypes} from "prop-types"
-import { STORAGE_KEYS } from 'app/constants';
-import { signin } from 'app/api';
-import useAsyncStorage from 'app/hooks/storage';
+import { PropTypes } from 'prop-types';
 
-const Signin = ({navigation}) => {
+import { loginAndSaveToken } from 'app/redux/ducks/user';
+
+const Signin = ({ navigation }) => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
-  const memoizedStartValue = React.useMemo(() => {return {ready: true}},[])
-  const [, setUserData] = useAsyncStorage(STORAGE_KEYS.USER_DATA, memoizedStartValue)
-  // const [, , updateUserId] = useAsyncStorage(STORAGE_KEYS.USER_ID);
-  // const [, , updateAuthToken] = useAsyncStorage(
-  //   STORAGE_KEYS.AUTH_TOKEN,
-  // );
 
   return (
     <View
@@ -47,14 +40,7 @@ const Signin = ({navigation}) => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            setUserData({ready: false})
-            const response = await signin(email, pass);
-            if (response.token && response.id) {
-              await setUserData({id: response.id.toString(), token: response.token, ready: true})
-              navigation.navigate("Home");
-            } else {
-              setUserData({ready: true})
-            }
+            await loginAndSaveToken();
             setButtonLoading(false);
           }}
           disabled={!(email && pass)}
@@ -64,7 +50,7 @@ const Signin = ({navigation}) => {
         </Button>
         <Button
           onPress={() => {
-            navigation.navigate("Sign Up")
+            navigation.navigate('Sign Up');
           }}
         >
           Sign up
