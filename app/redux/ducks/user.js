@@ -64,35 +64,41 @@ export const setLoading = () => {
   return { type: actionTypes.setLoading };
 };
 
-// helpers
-export const loginAndSaveToken = async (email, pass) => {
+// thunk action creators
+export const loginAndSaveToken = (email, pass) => {
   return async (dispatch) => {
+    console.log('attempting to sign in');
     dispatch(setLoading());
     const response = await signin(email, pass);
+    console.log(`received response ${JSON.stringify(response)}`);
     if (response.token && response.id) {
-      dispatch(signIn({ email, pass }));
-    } else {
-      dispatch(signOut());
+      return dispatch(
+        signIn({ token: response.token, id: response.id }),
+      );
     }
+    return dispatch(signOut());
+    // return 'done';
   };
 };
 
-export const restoreAndSaveToken = async () => {
+export const restoreAndSaveToken = () => {
   return async (dispatch) => {
+    console.log('dispatch is');
+    console.log(dispatch);
     dispatch(setLoading());
     const rawUserData = await AsyncStorage.getItem(
       STORAGE_KEYS.USER_DATA,
     );
     const userDataJson = JSON.stringify(rawUserData);
     if (userDataJson.id && userDataJson.userToken) {
-      dispatch(
+      await dispatch(
         restoreToken({
           token: userDataJson.userToken,
           id: userDataJson.id,
         }),
       );
-    } else {
-      dispatch(signOut());
     }
+    await dispatch(signOut());
+    return 'done';
   };
 };

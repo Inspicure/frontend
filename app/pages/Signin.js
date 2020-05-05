@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Title, TextInput } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { PropTypes } from 'prop-types';
 
 import { loginAndSaveToken } from 'app/redux/ducks/user';
@@ -9,6 +10,7 @@ const Signin = ({ navigation }) => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
+  const dispatch = useDispatch();
 
   return (
     <View
@@ -40,7 +42,9 @@ const Signin = ({ navigation }) => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            await loginAndSaveToken();
+            const response = await dispatch(
+              loginAndSaveToken(email, pass),
+            );
             setButtonLoading(false);
           }}
           disabled={!(email && pass)}

@@ -22,23 +22,20 @@ const Stack = createStackNavigator();
 const App = () => {
   const dispatch = useDispatch();
   const loadingState = useSelector((state) => {
-    return state.loading;
+    return state.user.isLoading;
   });
   const userToken = useSelector((state) => {
-    return state.userToken;
+    return state.user.userToken;
   });
-
+  console.log(`userToken: ${userToken}`);
   React.useEffect(() => {
     // Fetch the token from storage and maybe save to redux
-    restoreAndSaveToken(dispatch);
+    dispatch(restoreAndSaveToken());
   }, [dispatch]);
   return (
     <Stack.Navigator initialRouteName="Sign Up">
       {loadingState && (
-        <Stack.Screen
-          name="Loading"
-          component={<ActivityIndicator />}
-        />
+        <Stack.Screen name="Loading" component={ActivityIndicator} />
       )}
       {userToken ? (
         <Stack.Screen name="Home" component={Router} />
