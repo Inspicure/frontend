@@ -1,12 +1,16 @@
 import React from 'react';
 import {
+  Button,
   IconButton,
   Text,
 } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
-const Homepage = ({ navigation }) => {
+import { signOut } from 'app/redux/ducks/user';
 
+const Homepage = ({ navigation }) => {
+  const dispatch = useDispatch();
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -19,7 +23,10 @@ const Homepage = ({ navigation }) => {
     });
   }, [navigation]);
   return (
-    <Text>You&apos;re home!</Text>
+    <>
+      <Text>You&apos;re home!</Text>
+      <Button onPress={() => dispatch(signOut())} mode="contained" compact>Sign Out</Button>
+    </>
   );
 };
 
