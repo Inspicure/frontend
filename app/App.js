@@ -27,18 +27,17 @@ const App = () => {
   const userToken = useSelector((state) => {
     return state.user.userToken;
   });
-  console.log(`userToken: ${userToken}`);
   React.useEffect(() => {
     // Fetch the token from storage and maybe save to redux
     dispatch(restoreAndSaveToken());
   }, [dispatch]);
   return (
-    <Stack.Navigator initialRouteName="Sign Up">
+    <Stack.Navigator initialRouteName="Sign Up" headerMode={false}>
       {loadingState && (
         <Stack.Screen name="Loading" component={ActivityIndicator} />
       )}
       {userToken ? (
-        <Stack.Screen name="Home" component={Router} />
+        <Stack.Screen name="HomeRouter" component={Router} />
       ) : (
         <>
           <Stack.Screen name="Sign In" component={Signin} />

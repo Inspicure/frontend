@@ -1,37 +1,18 @@
 import React from "react";
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createStackNavigator } from '@react-navigation/stack';
-import Chat from "app/pages/Chat";
-import { IconButton } from "react-native-paper";
-import Homepage from "app/pages/Homepage";
+import { WrappedChat, WrappedHomepage} from "app/pages/WrappedPages";
 import PropTypes from "prop-types";
 
 const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator();
-
-const NavigatorComponent = () => {
-    return (
-      <Stack.Navigator
-        initialRouteName="Home"
-      >
-        <Stack.Screen
-          name="Home"
-        >
-          {Homepage}
-        </Stack.Screen>
-      </Stack.Navigator>
-    )
-}
 
 const Router = () => {
     return (
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen
           name="Home"
-          component={NavigatorComponent}
-
+          component={WrappedHomepage}
         />
-        <Drawer.Screen name="Chat" component={Chat} />
+        <Drawer.Screen name="Chat" component={WrappedChat} />
       </Drawer.Navigator>
     )
 }
