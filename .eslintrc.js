@@ -27,5 +27,6 @@ module.exports = {
       1,
       { extensions: ['.js', '.jsx'] },
     ],
+    'import/no-unresolved': 'off',
   },
 };

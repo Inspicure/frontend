@@ -6,16 +6,15 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
-import { useHistory } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { signupNewUser } from '../api';
 
-const Signup = () => {
+const Signup = ({ navigation }) => {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [buttonLoading, setButtonLoading] = React.useState(false);
-  const history = useHistory();
   return (
     <View
       style={{
@@ -67,7 +66,7 @@ const Signup = () => {
         </Button>
         <Button
           onPress={() => {
-            history.push('/signin');
+            navigation.navigate('Sign In');
           }}
         >
           Sign in
@@ -75,6 +74,11 @@ const Signup = () => {
       </KeyboardAvoidingView>
     </View>
   );
+};
+
+Signup.propTypes = {
+  navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired })
+    .isRequired, // eslint killin me
 };
 
 export default Signup;

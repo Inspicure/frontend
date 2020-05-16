@@ -1,48 +1,41 @@
 import React from 'react';
 import {
-  ActivityIndicator,
-  Appbar,
   Button,
+  IconButton,
+  Text,
 } from 'react-native-paper';
-import { Redirect } from 'react-router-native';
-import useAsyncStorage from 'app/hooks/storage';
-import { STORAGE_KEYS } from 'app/constants';
+import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 
-const Homepage = () => {
-  const [
-    storedAuthToken,
-    authTokenDataReady,
-    ,
-    clearAuthToken,
-  ] = useAsyncStorage(STORAGE_KEYS.AUTH_TOKEN);
+import { signOut } from 'app/redux/ducks/user';
 
-  const [
-    storedUserId,
-    userIdDataReady,
-    ,
-    clearUserId,
-  ] = useAsyncStorage(STORAGE_KEYS.USER_ID);
-
-  // redirect to signup if no credentials in keychain
-  return !(authTokenDataReady && userIdDataReady) ? (
-    <ActivityIndicator animating={true} />
-  ) : !(storedAuthToken && storedUserId) ? (
-    <Redirect to={{ pathname: '/signin' }} />
-  ) : (
+const Homepage = ({ navigation }) => {
+  const dispatch = useDispatch();
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="menu"
+          onPress={() => navigation.toggleDrawer()}
+        />
+      ),
+      headerTitle: 'Hallways',
+    });
+  }, [navigation]);
+  return (
     <>
-      <Appbar.Header>
-        <Appbar.Content title="Home" />
-      </Appbar.Header>
-      <Button
-        onPress={() => {
-          clearAuthToken();
-          clearUserId();
-        }}
-      >
-        Logout
-      </Button>
+      <Text>You&apos;re home!</Text>
+      <Button onPress={() => dispatch(signOut())} mode="contained" compact>Sign Out</Button>
     </>
   );
+};
+
+Homepage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    setOptions: PropTypes.func.isRequired,
+    toggleDrawer: PropTypes.func.isRequired,
+  }).isRequired, // eslint killin me
 };
 
 export default Homepage;
