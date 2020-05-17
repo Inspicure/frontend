@@ -20,6 +20,12 @@ export const initialState = {
 export default (prevState = initialState, action) => {
   switch (action.type) {
     case actionTypes.restoreToken:
+      console.log(`restoring token to ${{
+        ...prevState,
+        userToken: action.payload.token,
+        id: action.payload.id,
+        isLoading: false,
+      }}`);
       return {
         ...prevState,
         userToken: action.payload.token,
@@ -67,10 +73,8 @@ export const setLoading = () => {
 // thunk action creators
 export const loginAndSaveToken = (email, pass) => {
   return async (dispatch) => {
-    console.log('attempting to sign in');
     dispatch(setLoading());
     const response = await signin(email, pass);
-    console.log(`received response ${JSON.stringify(response)}`);
     if (response.token && response.id) {
       return dispatch(
         signIn({ token: response.token, id: response.id }),
@@ -83,22 +87,21 @@ export const loginAndSaveToken = (email, pass) => {
 
 export const restoreAndSaveToken = () => {
   return async (dispatch) => {
-    console.log('dispatch is');
-    console.log(dispatch);
     dispatch(setLoading());
     const rawUserData = await AsyncStorage.getItem(
       STORAGE_KEYS.USER_DATA,
     );
-    const userDataJson = JSON.stringify(rawUserData);
-    if (userDataJson.id && userDataJson.userToken) {
+    const userDataJson = JSON.parse(rawUserData);
+    if (userDataJson.id && userDataJson.token) {
       await dispatch(
         restoreToken({
-          token: userDataJson.userToken,
+          token: userDataJson.token,
           id: userDataJson.id,
         }),
       );
+    } else {
+      await dispatch(signOut());
     }
-    await dispatch(signOut());
     return 'done';
   };
 };

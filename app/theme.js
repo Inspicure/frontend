@@ -1,1 +1,1 @@
-export const margin = 10;
+export const margin = {single: 10, double: 20};

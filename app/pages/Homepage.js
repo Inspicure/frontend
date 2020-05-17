@@ -1,31 +1,41 @@
 import React from 'react';
-import {
-  Button,
-  IconButton,
-  Text,
-} from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Button, FAB, IconButton, Text } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { margin } from 'app/theme';
 
 import { signOut } from 'app/redux/ducks/user';
 
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: margin.double,
+    right: 0,
+    bottom: 0,
+  },
+});
+
 const Homepage = ({ navigation }) => {
   const dispatch = useDispatch();
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          icon="menu"
-          onPress={() => navigation.toggleDrawer()}
-        />
-      ),
-      headerTitle: 'Hallways',
-    });
-  }, [navigation]);
+  const [modalVisible, setModalVisible] = React.useState(false);
   return (
     <>
+      <FAB
+        style={styles.fab}
+        icon="plus"
+        onPress={() => {
+          navigation.jumpTo('CreateNewHallway');
+        }}
+      />
       <Text>You&apos;re home!</Text>
-      <Button onPress={() => dispatch(signOut())} mode="contained" compact>Sign Out</Button>
+      <Button
+        onPress={() => dispatch(signOut())}
+        mode="contained"
+        compact
+      >
+        Sign Out
+      </Button>
     </>
   );
 };
