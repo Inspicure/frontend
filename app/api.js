@@ -56,3 +56,11 @@ export const signupNewUser = (
 export const signin = (email, password) => {
   return get('signin', { email, password });
 };
+
+export const createHallway = (title, description, creatorId, tags, token) => {
+  return post('create_hallway', {title, description, creatorId, tags, token});
+}
+
+export const getHallways = () => {
+  return get('get_hallways');
+}

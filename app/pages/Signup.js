@@ -7,9 +7,11 @@ import {
 } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { signupNewUser } from '../api';
+import { signUpAndSaveToken } from 'app/redux/ducks/user';
+import { useDispatch } from 'react-redux';
 
 const Signup = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [firstName, setFirstName] = React.useState('');
@@ -56,7 +58,9 @@ const Signup = ({ navigation }) => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            await signupNewUser(email, pass, firstName, lastName);
+            await dispatch(
+              signUpAndSaveToken(email, pass, firstName, lastName),
+            );
             setButtonLoading(false);
           }}
           disabled={!(email && pass && firstName && lastName)}
