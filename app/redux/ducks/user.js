@@ -1,6 +1,6 @@
 // sourced largely from https://medium.com/swlh/the-good-the-bad-of-react-redux-and-why-ducks-might-be-the-solution-1567d5bdc698
 // and https://github.com/erikras/ducks-modular-redux
-import { signin } from 'app/api';
+import { signin, signupNewUser } from 'app/api';
 import AsyncStorage from '@react-native-community/async-storage';
 import { STORAGE_KEYS } from 'app/constants';
 
@@ -40,6 +40,7 @@ export default (prevState = initialState, action) => {
         isLoading: false,
       };
     case actionTypes.signOut:
+      console.log("signing out")
       return {
         ...prevState,
         userToken: null,
@@ -76,14 +77,28 @@ export const loginAndSaveToken = (email, pass) => {
     dispatch(setLoading());
     const response = await signin(email, pass);
     if (response.token && response.id) {
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify({id: response.id, token: response.token}));
       return dispatch(
         signIn({ token: response.token, id: response.id }),
       );
     }
     return dispatch(signOut());
-    // return 'done';
   };
 };
+
+export const signUpAndSaveToken = (email, pass, firstName, lastName) => {
+  return async (dispatch) => {
+    dispatch(setLoading());
+    const response = await signupNewUser(email, pass, firstName, lastName);
+    if (response.token && response.id) {
+      await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify({id: response.id, token: response.token}));
+      return dispatch(
+        signIn({ token: response.token, id: response.id }),
+      );
+    }
+    return dispatch(signOut());
+  };
+}
 
 export const restoreAndSaveToken = () => {
   return async (dispatch) => {
@@ -92,7 +107,7 @@ export const restoreAndSaveToken = () => {
       STORAGE_KEYS.USER_DATA,
     );
     const userDataJson = JSON.parse(rawUserData);
-    if (userDataJson.id && userDataJson.token) {
+    if (userDataJson && userDataJson.id && userDataJson.token) {
       await dispatch(
         restoreToken({
           token: userDataJson.token,
@@ -105,3 +120,12 @@ export const restoreAndSaveToken = () => {
     return 'done';
   };
 };
+
+export const signOutAndClearToken = () => {
+  return async (dispatch) => {
+    dispatch(setLoading());
+    await AsyncStorage.removeItem(STORAGE_KEYS.USER_DATA);
+    await dispatch(signOut())
+    return 'done';
+  }
+}

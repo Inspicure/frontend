@@ -30,11 +30,13 @@ const Signin = ({ navigation }) => {
             onChangeText={setEmail}
             style={{ width: 300 }}
             autoCapitalize="none"
+            value={email}
           />
           <TextInput
             label="Password"
             onChangeText={setPass}
             style={{ width: 300 }}
+            pass={pass}
             secureTextEntry
           />
         </View>
@@ -42,7 +44,7 @@ const Signin = ({ navigation }) => {
           mode="contained"
           onPress={async () => {
             setButtonLoading(true);
-            const response = await dispatch(
+            await dispatch(
               loginAndSaveToken(email, pass),
             );
             setButtonLoading(false);

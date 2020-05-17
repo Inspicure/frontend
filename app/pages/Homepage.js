@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { margin } from 'app/theme';
 
-import { signOut } from 'app/redux/ducks/user';
+import { signOutAndClearToken } from 'app/redux/ducks/user';
 
 const styles = StyleSheet.create({
   fab: {
@@ -30,7 +30,7 @@ const Homepage = ({ navigation }) => {
       />
       <Text>You&apos;re home!</Text>
       <Button
-        onPress={() => dispatch(signOut())}
+        onPress={() => dispatch(signOutAndClearToken())}
         mode="contained"
         compact
       >
