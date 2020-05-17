@@ -1,11 +1,15 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Button, FAB, IconButton, Text } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Button, FAB, Title } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { margin } from 'app/theme';
 
+import HallwayListItem from "app/components/HallwayListItem"
+
 import { signOutAndClearToken } from 'app/redux/ducks/user';
+
+import {getHallways} from "app/api";
 
 const styles = StyleSheet.create({
   fab: {
@@ -18,17 +22,33 @@ const styles = StyleSheet.create({
 
 const Homepage = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [hallways, setHallways] = React.useState([])
+  const loadHallways = React.useCallback(async () => {
+    const retrievedHallways = await getHallways();
+      if (retrievedHallways) {
+        setHallways(retrievedHallways)
+      }
+  }, [])
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadHallways();
+    })
+    return unsubscribe;
+  },[loadHallways, navigation])
   return (
-    <>
+    <View style={{margin: margin.single, flex: 1}}>
       <FAB
         style={styles.fab}
         icon="plus"
         onPress={() => {
-          navigation.jumpTo('CreateNewHallway');
+          navigation.navigate("CreateNewHallway");
         }}
       />
-      <Text>You&apos;re home!</Text>
+      <Title>Open hallways</Title>
+      {hallways.map((hallway) => {
+        return <HallwayListItem hallway={hallway} key={`${hallway.title}`} />
+      })}
       <Button
         onPress={() => dispatch(signOutAndClearToken())}
         mode="contained"
@@ -36,15 +56,14 @@ const Homepage = ({ navigation }) => {
       >
         Sign Out
       </Button>
-    </>
+    </View>
   );
 };
 
 Homepage.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
-    setOptions: PropTypes.func.isRequired,
-    toggleDrawer: PropTypes.func.isRequired,
+    addListener: PropTypes.func.isRequired
   }).isRequired, // eslint killin me
 };
 

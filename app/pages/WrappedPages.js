@@ -45,6 +45,7 @@ const WrapModal = ({ component, name }) => {
               onPress={() => navigation.goBack()}
             />
           ),
+          drawerLabel: () => null
         })}
         component={component}
       />

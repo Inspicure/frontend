@@ -5,16 +5,15 @@ import {
   WrappedHomepage,
   WrappedCreateNewHallway,
 } from 'app/pages/WrappedPages';
-import { IconButton } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 const Drawer = createDrawerNavigator();
 
 const Router = () => {
   return (
-    <Drawer.Navigator initialRouteName="Home2">
+    <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen
-        name="Home2"
+        name="Home"
         component={WrappedHomepage}
         options={{ title: 'Hallways' }}
       />
@@ -22,6 +21,11 @@ const Router = () => {
       <Drawer.Screen
         name="CreateNewHallway"
         component={WrappedCreateNewHallway}
+        options={{
+            drawerLabel: () => null,
+            title: null,
+            drawerIcon: () => null
+        }}
       />
     </Drawer.Navigator>
   );

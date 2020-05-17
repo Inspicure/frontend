@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from "prop-types";
 import { useSelector } from 'react-redux';
 import {createHallway} from "app/api"
 import {Button, Chip, Searchbar, List, Text, TextInput} from "react-native-paper";
 import {KeyboardAvoidingView, Platform} from "react-native";
 
-const CreateNewHallway = () => {
+const CreateNewHallway = ({navigation}) => {
     const [title, setTitle] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [tags, setTags] = React.useState(["hello"]);
@@ -27,7 +28,6 @@ const CreateNewHallway = () => {
             setTags([...tags].filter((tag) => {return tag !== tagToRemove}))
         }
     }
-    console.log(tags)
     return (
       <>
         <KeyboardAvoidingView
@@ -54,13 +54,19 @@ const CreateNewHallway = () => {
         })}
         <Searchbar placeholder="Add tags" />
         <List.Item title="Radiology" onPress={() => {addToTags("Radiology")}} />
-        <Button onPress={() => {createHallway(title, description, creatorId, token)}}>Submit</Button>
+        <Button onPress={() => {
+            createHallway(title, description, creatorId, tags, token);
+            navigation.goBack();
+        }}
+        >
+          Submit
+        </Button>
       </>
     )
 }
 
 CreateNewHallway.propTypes = {
-
+    navigation: PropTypes.shape({goBack: PropTypes.func.isRequired}).isRequired
 }
 
 export default CreateNewHallway;
