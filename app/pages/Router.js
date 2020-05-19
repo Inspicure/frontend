@@ -60,7 +60,7 @@ const Router = () => {
             drawerIcon: () => null
         }}
       >
-        {wrapComponent(() => {return <CreateNewHallway />}, "CreateNewHallway", true)}
+        {wrapComponent(({navigation}) => {return <CreateNewHallway navigation={navigation} />}, "CreateNewHallway", true)}
       </Drawer.Screen>
       {hallways.map((hallway) => {
         return <Drawer.Screen name={hallway.title}>{wrapComponent(Chat, "Chat")}</Drawer.Screen>
