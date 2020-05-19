@@ -11,10 +11,10 @@ const CreateNewHallway = ({navigation}) => {
     const [tags, setTags] = React.useState(["hello"]);
 
     const token = useSelector((state) => {
-        return state.user.userToken;
+        return state.auth.userToken;
       });
       const creatorId = useSelector((state) => {
-        return state.user.id;
+        return state.auth.id;
       });
 
     const addToTags = (tagToAdd) => {

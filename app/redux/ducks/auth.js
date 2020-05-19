@@ -20,12 +20,6 @@ export const initialState = {
 export default (prevState = initialState, action) => {
   switch (action.type) {
     case actionTypes.restoreToken:
-      console.log(`restoring token to ${{
-        ...prevState,
-        userToken: action.payload.token,
-        id: action.payload.id,
-        isLoading: false,
-      }}`);
       return {
         ...prevState,
         userToken: action.payload.token,
@@ -40,7 +34,6 @@ export default (prevState = initialState, action) => {
         isLoading: false,
       };
     case actionTypes.signOut:
-      console.log("signing out")
       return {
         ...prevState,
         userToken: null,
