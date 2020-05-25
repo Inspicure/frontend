@@ -28,5 +28,7 @@ module.exports = {
       { extensions: ['.js', '.jsx'] },
     ],
     'import/no-unresolved': 'off',
+    'react/destructuring-assignment': 'off',
+    'react/jsx-props-no-spreading': 'off',
   },
 };

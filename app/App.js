@@ -11,7 +11,7 @@ import React from 'react';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { restoreAndSaveToken } from './redux/ducks/user';
+import { restoreAndSaveToken } from './redux/ducks/auth';
 
 import Router from './pages/Router';
 import Signin from './pages/Signin';
@@ -22,10 +22,10 @@ const Stack = createStackNavigator();
 const App = () => {
   const dispatch = useDispatch();
   const loadingState = useSelector((state) => {
-    return state.user.isLoading;
+    return state.auth.isLoading;
   });
   const userToken = useSelector((state) => {
-    return state.user.userToken;
+    return state.auth.userToken;
   });
   React.useEffect(() => {
     // Fetch the token from storage and maybe save to redux

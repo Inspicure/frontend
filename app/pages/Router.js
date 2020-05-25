@@ -1,32 +1,91 @@
 import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import {
-  WrappedChat,
-  WrappedHomepage,
-  WrappedCreateNewHallway,
-} from 'app/pages/WrappedPages';
+import { DrawerContentScrollView, DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer';
+import {useSelector} from "react-redux"
+import CreateNewHallway from 'app/pages/CreateNewHallway';
+import Chat from 'app/pages/Chat';
+import Homepage from 'app/pages/Homepage';
 import PropTypes from 'prop-types';
 
+import { createStackNavigator } from '@react-navigation/stack';
+import { IconButton, Title } from 'react-native-paper';
+import {View} from "react-native";
+import {padding} from "app/theme"
+
+
+// Use this list for modals that aren't supposed to be in the side menu
+const HIDE_FROM_DRAWER = ["CreateNewHallway"];
+
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const Router = () => {
+const wrapComponent = (component, name, isModal=false, params=null) => {
+  return () => {
+    return (
+      <Stack.Navigator initialRouteName={name}>
+        <Stack.Screen
+          name={name}
+          options={({ navigation }) => ({
+            headerLeft: () => (
+              <IconButton
+                icon={isModal ? "keyboard-backspace" : "menu"}
+                onPress={() => {
+                  if (isModal) {
+                    navigation.goBack()
+                  } else {
+                    navigation.toggleDrawer()
+                  }
+                }}
+              />
+            ),
+          })}
+          component={component}
+          initialParams={params}
+        />
+      </Stack.Navigator>
+    )
+  }
+}
+
+const CustomDrawerContent = (props) => {
+  const processedRoutes = props.state.routes.filter((route) => {
+    return !HIDE_FROM_DRAWER.includes(route.name)
+  });
   return (
-    <Drawer.Navigator initialRouteName="Home">
+    <DrawerContentScrollView
+      {...props}
+    >
+      <View style={{padding: padding.single}}>
+        <Title>Joined hallways</Title>
+        <DrawerItemList
+          {...props}
+          state={{...props.state,
+          routes: processedRoutes
+      }}
+        />
+      </View>
+    </DrawerContentScrollView>
+  )
+}
+
+
+const Router = () => {
+  const hallways = useSelector((state) => {return state.hallways.hallwayMemberships});
+  return (
+    <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => {return <CustomDrawerContent {...props} />}}>
       <Drawer.Screen
         name="Home"
-        component={WrappedHomepage}
         options={{ title: 'Hallways' }}
-      />
-      <Drawer.Screen name="Chat" component={WrappedChat} />
+      >
+        {wrapComponent(Homepage, "Hallways")}
+      </Drawer.Screen>
       <Drawer.Screen
         name="CreateNewHallway"
-        component={WrappedCreateNewHallway}
-        options={{
-            drawerLabel: () => null,
-            title: null,
-            drawerIcon: () => null
-        }}
-      />
+      >
+        {wrapComponent(({navigation}) => {return <CreateNewHallway navigation={navigation} />}, "CreateNewHallway", true)}
+      </Drawer.Screen>
+      {hallways.map((hallway) => {
+        return <Drawer.Screen name={hallway.title}>{wrapComponent(Chat, "Chat", false, {hallway})}</Drawer.Screen>
+      })}
     </Drawer.Navigator>
   );
 };

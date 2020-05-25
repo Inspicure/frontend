@@ -7,7 +7,7 @@ import {
 } from 'react-native-paper';
 import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { signUpAndSaveToken } from 'app/redux/ducks/user';
+import { signUpAndSaveToken } from 'app/redux/ducks/auth';
 import { useDispatch } from 'react-redux';
 
 const Signup = ({ navigation }) => {

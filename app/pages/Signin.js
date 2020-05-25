@@ -4,7 +4,7 @@ import { Platform, KeyboardAvoidingView, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { PropTypes } from 'prop-types';
 
-import { loginAndSaveToken } from 'app/redux/ducks/user';
+import { loginAndSaveToken } from 'app/redux/ducks/auth';
 
 const Signin = ({ navigation }) => {
   const [email, setEmail] = React.useState('');
