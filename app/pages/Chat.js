@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { IconButton, Text } from 'react-native-paper';
 
-const Chat = ({ navigation }) => {
-  return <Text>I am chat</Text>;
+const Chat = ({ route, navigation }) => {
+return <Text>{route.params.hallway.title}</Text>;
 };
 
 Chat.propTypes = {
