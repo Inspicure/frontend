@@ -1,4 +1,4 @@
-import {getHallways} from "app/api";
+import {getSubscriptions} from "app/api";
 
 export const actionTypes = {
     updateHallwayMemberships: 'UPDATE_HALLWAYS_MEMBERSHIP',
@@ -35,7 +35,7 @@ export const updateHallwayMemberships = (payload) => {
 export const retrieveAndSaveHallwayMemberships = () => {
     return async (dispatch) => {
         dispatch(setLoading());
-        const retrievedHallways = await getHallways();
+        const retrievedHallways = await getSubscriptions();
         if (retrievedHallways) {
             dispatch(updateHallwayMemberships({hallwayMemberships: retrievedHallways}));
         }
