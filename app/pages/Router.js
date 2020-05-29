@@ -1,6 +1,6 @@
 import React from 'react';
 import { DrawerContentScrollView, DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer';
-import {useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import CreateNewHallway from 'app/pages/CreateNewHallway';
 import Chat from 'app/pages/Chat';
 import Homepage from 'app/pages/Homepage';
@@ -10,6 +10,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { IconButton, Title } from 'react-native-paper';
 import {View} from "react-native";
 import {padding} from "app/theme"
+import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
 
 // Use this list for modals that aren't supposed to be in the side menu
@@ -69,6 +70,10 @@ const CustomDrawerContent = (props) => {
 
 
 const Router = () => {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(retrieveAndSaveHallwayMemberships());
+  },[dispatch])
   const hallways = useSelector((state) => {return state.hallways.hallwayMemberships});
   return (
     <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => {return <CustomDrawerContent {...props} />}}>

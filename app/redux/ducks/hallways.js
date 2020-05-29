@@ -36,7 +36,6 @@ export const retrieveAndSaveHallwayMemberships = () => {
     return async (dispatch) => {
         dispatch(setLoading());
         const retrievedHallways = await getSubscriptions();
-        console.log(retrievedHallways)
         if (retrievedHallways) {
             dispatch(updateHallwayMemberships({hallwayMemberships: retrievedHallways}));
         }
