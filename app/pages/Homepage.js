@@ -5,11 +5,11 @@ import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { margin } from 'app/theme';
 
-import HallwayListItem from "app/components/HallwayListItem"
+import HallwayListItem from 'app/components/HallwayListItem';
 
 import { signOutAndClearToken } from 'app/redux/ducks/auth';
 
-import {getHallways} from "app/api";
+import { getHallways } from 'app/api';
 
 const styles = StyleSheet.create({
   fab: {
@@ -26,26 +26,32 @@ const Homepage = ({ navigation }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
-      const hallwaysRetrieved = await getHallways()
+      const hallwaysRetrieved = await getHallways();
       if (hallwaysRetrieved) {
         setHallways(hallwaysRetrieved);
       }
-    })
-    return unsubscribe
-  },[dispatch, navigation])
+    });
+    return unsubscribe;
+  }, [dispatch, navigation]);
   return (
-    <View style={{margin: margin.single, flex: 1}}>
+    <View style={{ margin: margin.single, flex: 1 }}>
       <FAB
         style={styles.fab}
         icon="plus"
         onPress={() => {
-          navigation.navigate("CreateNewHallway");
+          navigation.navigate('CreateNewHallway');
         }}
       />
       <Title>Open hallways</Title>
-      {hallways.map((hallway) => {
-        return <HallwayListItem hallway={hallway} key={`${hallway.title}`} />
-      })}
+      {hallways.length > 0 &&
+        hallways.map((hallway) => {
+          return (
+            <HallwayListItem
+              hallway={hallway}
+              key={`${hallway.title}`}
+            />
+          );
+        })}
       <Button
         onPress={() => dispatch(signOutAndClearToken())}
         mode="contained"
@@ -60,7 +66,7 @@ const Homepage = ({ navigation }) => {
 Homepage.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
-    addListener: PropTypes.func.isRequired
+    addListener: PropTypes.func.isRequired,
   }).isRequired, // eslint killin me
 };
 
