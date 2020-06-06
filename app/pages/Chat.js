@@ -15,16 +15,15 @@ const Chat = ({ route }) => {
     return state.auth.id;
   });
   const onPressSend = () => {
-    // hallway.id doesn't exist yet since we don't have IDs on backend
     sendChatMessage(chatMessage, userId, route.params.hallway._id);
     setChatMessage(null);
   };
   React.useEffect(() => {
     const loadMessages = async () => {
+      console.log(route.params.hallway._id)
       const response = await getMessagesForHallway(
         route.params.hallway._id,
       );
-      console.log(response);
       setMessages(response);
     };
     loadMessages();

@@ -47,7 +47,6 @@ const get = async (route, params) => {
   });
   if (fetchResult.ok) {
     const text = await fetchResult.text();
-    console.log(text)
     return JSON.parse(text);
   }
   console.log(

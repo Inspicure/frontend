@@ -91,6 +91,14 @@ const Router = () => {
       <Drawer.Screen name="Home" options={{ title: 'Hallways' }}>
         {wrapComponent(Homepage, 'Hallways')}
       </Drawer.Screen>
+      {hallways.length > 0 &&
+        hallways.map((hallway) => {
+          return (
+            <Drawer.Screen name={hallway.title}>
+              {wrapComponent(Chat, 'Chat', false, { hallway })}
+            </Drawer.Screen>
+          );
+        })}
       <Drawer.Screen name="CreateNewHallway">
         {wrapComponent(
           ({ navigation }) => {
@@ -100,14 +108,6 @@ const Router = () => {
           true,
         )}
       </Drawer.Screen>
-      {hallways.length > 0 &&
-        hallways.map((hallway) => {
-          return (
-            <Drawer.Screen name={hallway.title}>
-              {wrapComponent(Chat, 'Chat', false, { hallway })}
-            </Drawer.Screen>
-          );
-        })}
     </Drawer.Navigator>
   );
 };
