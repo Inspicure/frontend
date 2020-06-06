@@ -3,7 +3,7 @@ import React from 'react';
 import { IconButton, Text, TextInput } from 'react-native-paper';
 import { ScrollView, SafeAreaView, View } from 'react-native';
 import { padding } from 'app/theme';
-import { sendChatMessage } from 'app/socketApi';
+import { socket, sendChatMessage } from 'app/socketApi';
 import { useSelector } from 'react-redux';
 import { getMessagesForHallway } from 'app/api';
 import ChatMessage from 'app/components/ChatMessage';
@@ -28,6 +28,13 @@ const Chat = ({ route }) => {
     };
     loadMessages();
   }, [route.params.hallway._id]);
+
+  socket.on(`chat-${route.params.hallway._id}`, (msg) => {
+    const messageCopy = [...messages]
+    messageCopy.push(msg)
+    setMessages(messageCopy)
+
+  })
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flexGrow: 1 }}>
