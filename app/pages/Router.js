@@ -95,7 +95,7 @@ const Router = () => {
         hallways.map((hallway) => {
           return (
             <Drawer.Screen name={hallway.title}>
-              {wrapComponent(Chat, 'Chat', false, { hallway })}
+              {wrapComponent(Chat, hallway.title, false, { hallway })}
             </Drawer.Screen>
           );
         })}

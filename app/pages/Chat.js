@@ -37,9 +37,6 @@ const Chat = ({ route }) => {
   })
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flexGrow: 1 }}>
-        <Text>{route.params.hallway.title}</Text>
-      </View>
       {messages.length > 0 && (
         <ScrollView>
           {messages.map((message) => {
