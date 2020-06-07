@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from "prop-types";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {createHallway} from "app/api"
 import {Button, Chip, Searchbar, List, Text, TextInput} from "react-native-paper";
 import {KeyboardAvoidingView, Platform} from "react-native";
+import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
 const CreateNewHallway = ({navigation}) => {
     const [title, setTitle] = React.useState("");
@@ -28,6 +29,7 @@ const CreateNewHallway = ({navigation}) => {
             setTags([...tags].filter((tag) => {return tag !== tagToRemove}))
         }
     }
+    const dispatch = useDispatch();
     return (
       <>
         <KeyboardAvoidingView
@@ -54,8 +56,9 @@ const CreateNewHallway = ({navigation}) => {
         })}
         <Searchbar placeholder="Add tags" />
         <List.Item title="Radiology" onPress={() => {addToTags("Radiology")}} />
-        <Button onPress={() => {
-            createHallway(title, description, creatorId, tags, token);
+        <Button onPress={async () => {
+            await createHallway(title, description, creatorId, tags, token);
+            dispatch(retrieveAndSaveHallwayMemberships());
             navigation.goBack();
         }}
         >

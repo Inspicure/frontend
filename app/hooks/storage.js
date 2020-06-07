@@ -52,7 +52,6 @@ export default (key) => {
   const [storedValue, setStoredValue] = React.useState({ready: false});
 
   React.useEffect(() => {
-    console.log("triggering effect")
     const populateStoredValue = async () => {
       const storedData = await AsyncStorage.getItem(key);
       if (storedData !== null) {
