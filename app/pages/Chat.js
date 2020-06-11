@@ -11,6 +11,7 @@ import ChatMessage from 'app/components/ChatMessage';
 const Chat = ({ route }) => {
   const [chatMessage, setChatMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
+  const [users, setUsers] = React.useState({});
   const userId = useSelector((state) => {
     return state.auth.id;
   });
@@ -20,27 +21,54 @@ const Chat = ({ route }) => {
   };
   React.useEffect(() => {
     const loadMessages = async () => {
-      console.log(route.params.hallway._id)
       const response = await getMessagesForHallway(
         route.params.hallway._id,
       );
-      setMessages(response);
+      const userMap = response.users.reduce(
+        (mapData, user) => ((mapData[user._id] = user), mapData),
+        {},
+      );
+      setUsers(userMap);
+      setMessages(response.messages);
     };
     loadMessages();
   }, [route.params.hallway._id]);
 
-  socket.on(`chat-${route.params.hallway._id}`, (msg) => {
-    const messageCopy = [...messages]
-    messageCopy.push(msg)
-    setMessages(messageCopy)
+  const socketHandler = React.useCallback(
+    (msg) => {
+      const messageCopy = [...messages];
+      messageCopy.push(msg.message);
+      setMessages(messageCopy);
+      if (!users[msg.user._id]) {
+        const userCopy = { ...users };
+        userCopy[msg.user._id] = msg.user;
+        setUsers(userCopy);
+      }
+    },
+    [messages, users],
+  );
 
-  })
+  socket.on(`chat-${route.params.hallway._id}`, socketHandler);
+
+  let scrollViewRef = null;
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {messages.length > 0 && (
-        <ScrollView>
+        <ScrollView
+          ref={(ref) => {
+            scrollViewRef = ref;
+          }}
+          onContentSizeChange={() =>
+            scrollViewRef.scrollToEnd({ animated: true })
+          }
+        >
           {messages.map((message) => {
-            return <ChatMessage messageText={message.text} />;
+            return (
+              <ChatMessage
+                messageData={message}
+                userData={users[message.author_id]}
+              />
+            );
           })}
         </ScrollView>
       )}
