@@ -7,12 +7,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import CreateNewHallway from 'app/pages/CreateNewHallway';
 import Chat from 'app/pages/Chat';
-import Homepage from 'app/pages/Homepage';
+import HomepageRouter from 'app/pages/HomepageRouter';
 import PropTypes from 'prop-types';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { IconButton, Title } from 'react-native-paper';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import { padding } from 'app/theme';
 import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
@@ -89,7 +89,7 @@ const Router = () => {
       }}
     >
       <Drawer.Screen name="Home" options={{ title: 'Hallways' }}>
-        {wrapComponent(Homepage, 'Hallways')}
+        {wrapComponent(HomepageRouter, 'Hallways')}
       </Drawer.Screen>
       {hallways.length > 0 &&
         hallways.map((hallway) => {
