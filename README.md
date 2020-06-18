@@ -17,3 +17,5 @@ Client side
 ## issues and how to solve them
 ### `ENFILE: file table overflow` during `yarn install`
 Use the shell commands found here: https://github.com/reactioncommerce/reaction/issues/1938#issuecomment-284207213 to raise the open file limit on your mac.
+### Insufficient resources when starting simulator
+Follow suggestions in https://stackoverflow.com/questions/46673050/unable-to-boot-device-due-to-insufficient-system-resources-using-xcode-9
