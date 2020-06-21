@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from 'react-redux';
 import {createHallway} from "app/api"
-import {Button, Chip, Searchbar, List, Text, TextInput} from "react-native-paper";
-import {KeyboardAvoidingView, Platform} from "react-native";
+import {Appbar, Button, Chip, Searchbar, List, Text, TextInput} from "react-native-paper";
+import {SafeAreaView, KeyboardAvoidingView, Platform} from "react-native";
 import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
 const CreateNewHallway = ({navigation}) => {
@@ -31,7 +31,16 @@ const CreateNewHallway = ({navigation}) => {
     }
     const dispatch = useDispatch();
     return (
-      <>
+      <SafeAreaView>
+        <Appbar.Header>
+          <Appbar.BackAction
+            onPress={() => navigation.goBack()}
+          />
+          <Appbar.Content
+            title="Create new hallway"
+            subtitle="Ask a question to your peers"
+          />
+        </Appbar.Header>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
@@ -64,7 +73,7 @@ const CreateNewHallway = ({navigation}) => {
         >
           Submit
         </Button>
-      </>
+      </SafeAreaView>
     )
 }
 

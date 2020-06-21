@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { IconButton, Text, TextInput } from 'react-native-paper';
+import { Appbar, IconButton, TextInput } from 'react-native-paper';
 import { ScrollView, SafeAreaView, View } from 'react-native';
 import { padding } from 'app/theme';
 import { socket, sendChatMessage } from 'app/socketApi';
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { getMessagesForHallway } from 'app/api';
 import ChatMessage from 'app/components/ChatMessage';
 
-const Chat = ({ route }) => {
+const Chat = ({ route, navigation }) => {
   const [chatMessage, setChatMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [users, setUsers] = React.useState({});
@@ -48,19 +48,29 @@ const Chat = ({ route }) => {
     [messages, users],
   );
 
+  // TODO: teardown socket listeners
   socket.on(`chat-${route.params.hallway._id}`, socketHandler);
 
   let scrollViewRef = null;
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <Appbar.Header>
+        <Appbar.Action
+          icon="menu"
+          onPress={() => navigation.toggleDrawer()}
+        />
+        <Appbar.Content
+          title={route.params.hallway.title}
+          subtitle={route.params.hallway.description}
+        />
+      </Appbar.Header>
       {messages.length > 0 && (
         <ScrollView
           ref={(ref) => {
             scrollViewRef = ref;
           }}
           onContentSizeChange={() =>
-            scrollViewRef.scrollToEnd({ animated: true })
-          }
+            scrollViewRef.scrollToEnd({ animated: true })}
         >
           {messages.map((message) => {
             return (

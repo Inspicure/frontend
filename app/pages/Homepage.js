@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, FAB, Title } from 'react-native-paper';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { Appbar, Button, FAB, Title } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { margin } from 'app/theme';
@@ -34,7 +34,17 @@ const Homepage = ({ navigation }) => {
     return unsubscribe;
   }, [dispatch, navigation]);
   return (
-    <View style={{ margin: margin.single, flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Appbar.Header>
+        <Appbar.Action
+          icon="menu"
+          onPress={() => navigation.toggleDrawer()}
+        />
+        <Appbar.Content
+          title="Hallways"
+          subtitle="Share your expertise"
+        />
+      </Appbar.Header>
       <FAB
         style={styles.fab}
         icon="plus"
@@ -42,24 +52,26 @@ const Homepage = ({ navigation }) => {
           navigation.navigate('CreateNewHallway');
         }}
       />
-      <Title>Open hallways</Title>
-      {hallways.length > 0 &&
-        hallways.map((hallway) => {
-          return (
-            <HallwayListItem
-              hallway={hallway}
-              key={`${hallway.title}`}
-            />
-          );
-        })}
-      <Button
-        onPress={() => dispatch(signOutAndClearToken())}
-        mode="contained"
-        compact
-      >
-        Sign Out
-      </Button>
-    </View>
+      <View style={{ margin: margin.single }}>
+        <Title>Open hallways</Title>
+        {hallways.length > 0 &&
+          hallways.map((hallway) => {
+            return (
+              <HallwayListItem
+                hallway={hallway}
+                key={`${hallway.title}`}
+              />
+            );
+          })}
+        <Button
+          onPress={() => dispatch(signOutAndClearToken())}
+          mode="contained"
+          compact
+        >
+          Sign Out
+        </Button>
+      </View>
+    </SafeAreaView>
   );
 };
 
