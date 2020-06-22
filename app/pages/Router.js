@@ -6,18 +6,19 @@ import {
 } from '@react-navigation/drawer';
 import { useDispatch, useSelector } from 'react-redux';
 import CreateNewHallway from 'app/pages/CreateNewHallway';
+import HallwayPreview from 'app/pages/HallwayPreview';
 import Chat from 'app/pages/Chat';
 import HomepageRouter from 'app/pages/HomepageRouter';
 import PropTypes from 'prop-types';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { IconButton, Title } from 'react-native-paper';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import { padding } from 'app/theme';
 import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
 // Use this list for modals that aren't supposed to be in the side menu
-const HIDE_FROM_DRAWER = ['CreateNewHallway'];
+const MODAL_NAMES = ['CreateNewHallway', "HallwayPreview"];
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -25,10 +26,10 @@ const Drawer = createDrawerNavigator();
 const wrapComponent = (
   component,
   name,
-  isModal = false,
   params = null,
 ) => {
-  return () => {
+  return ({route}) => {
+    const isModal = MODAL_NAMES.includes(name)
     return (
       <Stack.Navigator initialRouteName={name}>
         <Stack.Screen
@@ -48,16 +49,15 @@ const wrapComponent = (
             ),
           })}
           component={component}
-          initialParams={params}
+          initialParams={params || route.params}
         />
       </Stack.Navigator>
     );
-  };
-};
+  }};
 
 const CustomDrawerContent = (props) => {
   const processedRoutes = props.state.routes.filter((route) => {
-    return !HIDE_FROM_DRAWER.includes(route.name);
+    return !MODAL_NAMES.includes(route.name);
   });
   // Convert to List.Section
   return (
@@ -95,7 +95,7 @@ const Router = () => {
         hallways.map((hallway) => {
           return (
             <Drawer.Screen name={hallway.title}>
-              {wrapComponent(Chat, hallway.title, false, { hallway })}
+              {wrapComponent(Chat, hallway.title, { hallway })}
             </Drawer.Screen>
           );
         })}
@@ -105,8 +105,11 @@ const Router = () => {
             return <CreateNewHallway navigation={navigation} />;
           },
           'CreateNewHallway',
-          true,
         )}
+      </Drawer.Screen>
+      <Drawer.Screen name="HallwayPreview">
+        {wrapComponent(({navigation, route}) => {return <HallwayPreview navigation={navigation} route={route} />},
+          'HallwayPreview')}
       </Drawer.Screen>
     </Drawer.Navigator>
   );

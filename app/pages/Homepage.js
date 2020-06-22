@@ -23,12 +23,18 @@ const styles = StyleSheet.create({
 const Homepage = ({ navigation }) => {
   const dispatch = useDispatch();
   const [hallways, setHallways] = React.useState([]);
+  const [userMap, setUserMap] = React.useState();
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       const hallwaysRetrieved = await getHallways();
       if (hallwaysRetrieved) {
-        setHallways(hallwaysRetrieved);
+        setHallways(hallwaysRetrieved.hallways);
+        const userMap = hallwaysRetrieved.users.reduce(
+          (mapData, user) => ((mapData[user._id] = user), mapData),
+          {},
+        );
+        setUserMap(userMap);
       }
     });
     return unsubscribe;
@@ -60,6 +66,12 @@ const Homepage = ({ navigation }) => {
               <HallwayListItem
                 hallway={hallway}
                 key={`${hallway.title}`}
+                onPress={() => {
+                  navigation.navigate('HallwayPreview', {
+                    hallway,
+                    user: userMap[hallway.creator_user_id],
+                  });
+                }}
               />
             );
           })}
