@@ -4,8 +4,6 @@ import { Appbar, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native';
 
 const HallwayPreview = ({ route, navigation }) => {
-  console.log('in component');
-  console.log(route);
   return (
     <SafeAreaView>
       <Appbar.Header>

@@ -16,6 +16,7 @@ import { IconButton, Title } from 'react-native-paper';
 import { View } from 'react-native';
 import { padding } from 'app/theme';
 import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
+import { roundToNearestPixel } from 'react-native/Libraries/Utilities/PixelRatio';
 
 // Use this list for modals that aren't supposed to be in the side menu
 const MODAL_NAMES = ['CreateNewHallway', "HallwayPreview"];
@@ -24,12 +25,15 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const wrapComponent = (
-  component,
+  Component,
   name,
   params = null,
 ) => {
-  return ({route}) => {
+  return ({navigation, route}) => {
     const isModal = MODAL_NAMES.includes(name)
+    if (params) {
+      route.params = params
+    }
     return (
       <Stack.Navigator initialRouteName={name}>
         <Stack.Screen
@@ -48,9 +52,10 @@ const wrapComponent = (
               />
             ),
           })}
-          component={component}
-          initialParams={params || route.params}
-        />
+          initialParams={params}
+        >
+          {() => {return <Component navigation={navigation} route={route} />}}
+        </Stack.Screen>
       </Stack.Navigator>
     );
   }};
@@ -101,14 +106,12 @@ const Router = () => {
         })}
       <Drawer.Screen name="CreateNewHallway">
         {wrapComponent(
-          ({ navigation }) => {
-            return <CreateNewHallway navigation={navigation} />;
-          },
+          CreateNewHallway,
           'CreateNewHallway',
         )}
       </Drawer.Screen>
       <Drawer.Screen name="HallwayPreview">
-        {wrapComponent(({navigation, route}) => {return <HallwayPreview navigation={navigation} route={route} />},
+        {wrapComponent(HallwayPreview,
           'HallwayPreview')}
       </Drawer.Screen>
     </Drawer.Navigator>
