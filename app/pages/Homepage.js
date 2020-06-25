@@ -1,5 +1,10 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { Appbar, Button, FAB, Title } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -17,18 +22,25 @@ const styles = StyleSheet.create({
     margin: margin.double,
     right: 0,
     bottom: 0,
+    zIndex: 1,
   },
 });
 
 const Homepage = ({ navigation }) => {
   const dispatch = useDispatch();
   const [hallways, setHallways] = React.useState([]);
+  const [userMap, setUserMap] = React.useState();
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       const hallwaysRetrieved = await getHallways();
       if (hallwaysRetrieved) {
-        setHallways(hallwaysRetrieved);
+        setHallways(hallwaysRetrieved.hallways);
+        const userMap = hallwaysRetrieved.users.reduce(
+          (mapData, user) => ((mapData[user._id] = user), mapData),
+          {},
+        );
+        setUserMap(userMap);
       }
     });
     return unsubscribe;
@@ -54,15 +66,24 @@ const Homepage = ({ navigation }) => {
       />
       <View style={{ margin: margin.single }}>
         <Title>Open hallways</Title>
-        {hallways.length > 0 &&
-          hallways.map((hallway) => {
-            return (
-              <HallwayListItem
-                hallway={hallway}
-                key={`${hallway.title}`}
-              />
-            );
-          })}
+        {hallways.length > 0 && (
+          <ScrollView>
+            {hallways.map((hallway) => {
+              return (
+                <HallwayListItem
+                  hallway={hallway}
+                  key={`${hallway.title}`}
+                  onPress={() => {
+                    navigation.navigate('HallwayPreview', {
+                      hallway,
+                      user: userMap[hallway.creator_user_id],
+                    });
+                  }}
+                />
+              );
+            })}
+          </ScrollView>
+        )}
         <Button
           onPress={() => dispatch(signOutAndClearToken())}
           mode="contained"

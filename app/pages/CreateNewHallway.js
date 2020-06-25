@@ -1,46 +1,62 @@
 import React from 'react';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import {createHallway} from "app/api"
-import {Appbar, Button, Chip, Searchbar, List, Text, TextInput} from "react-native-paper";
-import {SafeAreaView, KeyboardAvoidingView, Platform} from "react-native";
+import { createHallway } from 'app/api';
+import {
+  Appbar,
+  Button,
+  Chip,
+  Searchbar,
+  List,
+  Text,
+  TextInput,
+} from 'react-native-paper';
+import {
+  SafeAreaView,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import { retrieveAndSaveHallwayMemberships } from 'app/redux/ducks/hallways';
 
-const CreateNewHallway = ({navigation}) => {
-    const [title, setTitle] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [tags, setTags] = React.useState(["hello"]);
+const CreateNewHallway = ({ navigation }) => {
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [tags, setTags] = React.useState(['hello']);
 
-    const token = useSelector((state) => {
-        return state.auth.userToken;
-      });
-      const creatorId = useSelector((state) => {
-        return state.auth.id;
-      });
+  const token = useSelector((state) => {
+    return state.auth.userToken;
+  });
+  const creatorId = useSelector((state) => {
+    return state.auth.id;
+  });
 
-    const addToTags = (tagToAdd) => {
-        if (!tags.includes(tagToAdd)) {
-            setTags([...tags, tagToAdd])
-        }
+  const addToTags = (tagToAdd) => {
+    if (!tags.includes(tagToAdd)) {
+      setTags([...tags, tagToAdd]);
     }
+  };
 
-    const removeFromTags = (tagToRemove) => {
-        if (tags.includes(tagToRemove)) {
-            setTags([...tags].filter((tag) => {return tag !== tagToRemove}))
-        }
+  const removeFromTags = (tagToRemove) => {
+    if (tags.includes(tagToRemove)) {
+      setTags(
+        [...tags].filter((tag) => {
+          return tag !== tagToRemove;
+        }),
+      );
     }
-    const dispatch = useDispatch();
-    return (
-      <SafeAreaView>
-        <Appbar.Header>
-          <Appbar.BackAction
-            onPress={() => navigation.goBack()}
-          />
-          <Appbar.Content
-            title="Create new hallway"
-            subtitle="Ask a question to your peers"
-          />
-        </Appbar.Header>
+  };
+  const dispatch = useDispatch();
+  return (
+    <SafeAreaView>
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content
+          title="Create new hallway"
+          subtitle="Ask a question to your peers"
+        />
+      </Appbar.Header>
+      <ScrollView style={{ maxHeight: '85%' }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
@@ -61,24 +77,48 @@ const CreateNewHallway = ({navigation}) => {
         </KeyboardAvoidingView>
         <Text>Question tags</Text>
         {tags.map((tag) => {
-          return <Chip icon="information" onClose={() => {removeFromTags(tag)}} key={tag}>{tag}</Chip>
+          return (
+            <Chip
+              icon="information"
+              onClose={() => {
+                removeFromTags(tag);
+              }}
+              key={tag}
+            >
+              {tag}
+            </Chip>
+          );
         })}
         <Searchbar placeholder="Add tags" />
-        <List.Item title="Radiology" onPress={() => {addToTags("Radiology")}} />
-        <Button onPress={async () => {
-            await createHallway(title, description, creatorId, tags, token);
-            dispatch(retrieveAndSaveHallwayMemberships());
-            navigation.goBack();
+        <List.Item
+          title="Radiology"
+          onPress={() => {
+            addToTags('Radiology');
+          }}
+        />
+      </ScrollView>
+      <Button
+        onPress={async () => {
+          await createHallway(
+            title,
+            description,
+            creatorId,
+            tags,
+            token,
+          );
+          dispatch(retrieveAndSaveHallwayMemberships());
+          navigation.goBack();
         }}
-        >
-          Submit
-        </Button>
-      </SafeAreaView>
-    )
-}
+      >
+        Submit
+      </Button>
+    </SafeAreaView>
+  );
+};
 
 CreateNewHallway.propTypes = {
-    navigation: PropTypes.shape({goBack: PropTypes.func.isRequired}).isRequired
-}
+  navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired })
+    .isRequired,
+};
 
 export default CreateNewHallway;
