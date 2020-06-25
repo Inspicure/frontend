@@ -95,3 +95,7 @@ export const getSubscriptions = () => {
 export const getMessagesForHallway = (hallwayId) => {
   return get('get_messages_for_hallway', { hallwayId });
 };
+
+export const joinHallway = (hallwayId) => {
+  return post("join_hallway", {hallwayId});
+}
